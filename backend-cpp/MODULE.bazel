@@ -1,0 +1,87 @@
+# MODULE.bazel
+#
+# Note for IDE setup:
+# If you're seeing include errors in your IDE, make sure to add the following directories to your include path:
+# - external/crow/include
+# - external/nlohmann_json/single_include
+# - external/boost
+#
+# For Visual Studio Code, you can add these to your c_cpp_properties.json file:
+# "includePath": [
+#     "${workspaceFolder}/**",
+#     "${workspaceFolder}/external/crow/include",
+#     "${workspaceFolder}/external/nlohmann_json/single_include",
+#     "${workspaceFolder}/external/boost"
+# ]
+
+module(
+    name = "veriview",
+    version = "0.1.0",
+)
+
+# Core dependencies
+bazel_dep(name = "rules_cc", version = "0.1.1")
+bazel_dep(name = "bazel_skylib", version = "1.7.1")
+bazel_dep(name = "rules_pkg", version = "1.0.1")
+bazel_dep(name = "platforms", version = "0.0.10")
+
+http_archive = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+# Single Boost archive with all required components
+http_archive(
+    name = "boost",
+    urls = ["https://boostorg.jfrog.io/artifactory/main/release/1.83.0/source/boost_1_83_0.tar.gz"],
+    strip_prefix = "boost_1_83_0",
+    sha256 = "79e6d3f986444e5a80afbeccdaf2d1c1cf964baa8d766d20859d653a16c39848",
+    build_file_content = """
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "headers",
+    hdrs = glob(["boost/**/*.hpp", "boost/**/*.h", "boost/**/*.ipp"]),
+    includes = ["."],
+    defines = ["BOOST_ASIO_ENABLE_OLD_SERVICES"],
+    visibility = ["//visibility:public"],
+)
+""",
+)
+
+# Crow HTTP framework
+http_archive(
+    name = "crow",
+    urls = ["https://github.com/CrowCpp/Crow/archive/refs/tags/v1.0+4.tar.gz"],
+    strip_prefix = "Crow-1.0-4",
+    sha256 = "6e8cd90c3c9fdd70fce11477c8e25dee26722a5deae7d626ed82507de9d70f98",
+    build_file_content = """
+load("@rules_cc//cc:defs.bzl", "cc_library")
+cc_library(
+    name = "crow",
+    hdrs = glob(["include/crow/*.h", "include/crow/*.hpp", "include/crow.h"]),
+    includes = ["include"],
+    deps = [
+        "@boost//:headers",
+    ],
+    defines = ["BOOST_ASIO_ENABLE_OLD_SERVICES"],
+    visibility = ["//visibility:public"],
+)
+""",
+)
+
+# JSON for Modern C++
+http_archive(
+    name = "nlohmann_json",
+    urls = ["https://github.com/nlohmann/json/archive/refs/tags/v3.11.2.tar.gz"],
+    strip_prefix = "json-3.11.2",
+    sha256 = "d69f9deb6a75e2580465c6c4c5111b89c4dc2fa94e3a85fcd2ffcd9a143d9273",
+    build_file_content = """
+load("@rules_cc//cc:defs.bzl", "cc_library")
+cc_library(
+    name = "json",
+    hdrs = glob(["single_include/nlohmann/*.hpp"]),
+    include_prefix = "nlohmann",
+    strip_include_prefix = "single_include/nlohmann",
+    visibility = ["//visibility:public"],
+)
+""",
+)
+

@@ -1,0 +1,58 @@
+{
+    "modules": [
+        {
+            "complexity": 120,
+            "name": "alu",
+            "signals": [
+                {
+                    "direction": "input",
+                    "name": "A",
+                    "width": 32
+                },
+                {
+                    "direction": "input",
+                    "name": "B",
+                    "width": 32
+                },
+                {
+                    "direction": "output",
+                    "name": "Result",
+                    "width": 32
+                }
+            ],
+            "submodules": []
+        },
+        {
+            "complexity": 500,
+            "name": "cpu",
+            "signals": [
+                {
+                    "direction": "input",
+                    "name": "clk",
+                    "width": 1
+                },
+                {
+                    "direction": "input",
+                    "name": "reset",
+                    "width": 1
+                },
+                {
+                    "direction": "output",
+                    "name": "data_out",
+                    "width": 32
+                }
+            ],
+            "submodules": [
+                {
+                    "instanceName": "alu0",
+                    "moduleName": "alu",
+                    "portConnections": {
+                        "A": "regA",
+                        "B": "regB",
+                        "Result": "aluOut"
+                    }
+                }
+            ]
+        }
+    ]
+}
