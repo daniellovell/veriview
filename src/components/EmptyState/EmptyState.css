@@ -1,0 +1,26 @@
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  background-color: #f8f9fa;
+  color: #212529;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  z-index: 50;
+}
+
+.empty-state-title {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.empty-state-subtitle {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.loading-text {
+  font-size: 16px;
+  color: #495057;
+} 
