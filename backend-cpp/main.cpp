@@ -1,4 +1,5 @@
 #include "crow.h"
+#include "crow/middlewares/cors.h"
 #include "modules.hpp"
 #include <fstream>
 #include <sstream>
@@ -8,8 +9,19 @@
 #include <chrono>
 #include <cstdlib>
 
+// Define Windows version for Crow
+#define _WIN32_WINNT 0x0601
+
 // for convenience
 using json = nlohmann::json;
+
+// Helper function to check string endings (C++17 compatible)
+bool ends_with(const std::string& str, const std::string& suffix) {
+    if (str.length() < suffix.length()) {
+        return false;
+    }
+    return str.compare(str.length() - suffix.length(), suffix.length(), suffix) == 0;
+}
 
 json generate_dummy_netlist() {
     json j;
@@ -58,15 +70,16 @@ json generate_dummy_netlist() {
 }
 
 int main() {
-    crow::SimpleApp app;
+    // Create app with CORS middleware
+    crow::App<crow::CORSHandler> app;
 
-    // Enable CORS for development
+    // Configure CORS
     auto& cors = app.get_middleware<crow::CORSHandler>();
     cors
-      .global()
-      .headers("Content-Type", "Authorization")
-      .methods("POST"_method, "GET"_method, "PUT"_method, "DELETE"_method)
-      .origin("*");
+        .global()
+        .headers("Content-Type", "Authorization")
+        .methods("POST"_method, "GET"_method, "PUT"_method, "DELETE"_method)
+        .origin("*");
 
     // API endpoint to get netlist data
     CROW_ROUTE(app, "/api/netlist")
@@ -76,7 +89,7 @@ int main() {
 
     // Serve static files from the React build directory
     CROW_ROUTE(app, "/<path>")
-    ([](const crow::request& req, std::string path) {
+    ([](std::string path) {
         // Default to index.html for the root path
         if (path.empty() || path == "/") {
             path = "index.html";
@@ -103,13 +116,13 @@ int main() {
 
         // Set content type based on file extension
         std::string contentType = "text/plain";
-        if (path.ends_with(".html")) contentType = "text/html";
-        else if (path.ends_with(".js")) contentType = "application/javascript";
-        else if (path.ends_with(".css")) contentType = "text/css";
-        else if (path.ends_with(".json")) contentType = "application/json";
-        else if (path.ends_with(".png")) contentType = "image/png";
-        else if (path.ends_with(".jpg") || path.ends_with(".jpeg")) contentType = "image/jpeg";
-        else if (path.ends_with(".svg")) contentType = "image/svg+xml";
+        if (ends_with(path, ".html")) contentType = "text/html";
+        else if (ends_with(path, ".js")) contentType = "application/javascript";
+        else if (ends_with(path, ".css")) contentType = "text/css";
+        else if (ends_with(path, ".json")) contentType = "application/json";
+        else if (ends_with(path, ".png")) contentType = "image/png";
+        else if (ends_with(path, ".jpg") || ends_with(path, ".jpeg")) contentType = "image/jpeg";
+        else if (ends_with(path, ".svg")) contentType = "image/svg+xml";
 
         crow::response res(content);
         res.set_header("Content-Type", contentType);

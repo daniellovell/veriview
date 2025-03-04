@@ -1,8 +1,11 @@
 # NPM
 **/node_modules/*
+frontend-react/build/**
 
 # C++ build directory
 backend-cpp/build/**
+backend-cpp/build/**/*
+build/**
 
 # Prerequisites
 *.d
