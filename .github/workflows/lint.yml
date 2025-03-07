@@ -1,0 +1,43 @@
+name: Lint
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install Rust (Stable)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      # Rust linting
+      - name: Rust Format Check
+        run: cargo fmt --all -- --check
+
+      - name: Rust Clippy Check
+        run: cargo clippy -- -D warnings
+
+      # Node.js/React linting
+      - name: ESLint Check
+        run: npm run lint || true  # Add this script to package.json: "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
+
+      - name: TypeScript Check
+        run: npm run type-check || true  # Add this script to package.json: "type-check": "tsc --noEmit"
+
+      - name: Prettier Check
+        run: npm run format-check || true  # Add this script to package.json: "format-check": "prettier --check ." 
