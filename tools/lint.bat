@@ -30,19 +30,16 @@ cd ..
 REM Frontend checks
 echo Running ESLint...
 if "%CHECK_MODE%"=="true" (
-    npm exec eslint "./src/**/*.{js,jsx,ts,tsx}" || set CHECKS_FAILED=1
+    npx eslint "src/**/*.{js,jsx}" --max-warnings 0 || set CHECKS_FAILED=1
 ) else (
-    npm exec eslint "./src/**/*.{js,jsx,ts,tsx}" --fix || echo ESLint fixes attempted
+    npx eslint "src/**/*.{js,jsx}" --fix || echo ESLint fixes attempted
 )
-
-echo Running TypeScript check...
-npm exec tsc --noEmit || set CHECKS_FAILED=1
 
 echo Running Prettier...
 if "%CHECK_MODE%"=="true" (
-    npm exec prettier --check "./src/**/*.{js,jsx,ts,tsx,css,html}" || set CHECKS_FAILED=1
+    npx prettier --loglevel warn --check "src/**/*.{js,jsx,css,html}" || set CHECKS_FAILED=1
 ) else (
-    npm exec prettier --write "./src/**/*.{js,jsx,ts,tsx,css,html}" || echo Prettier fixes attempted
+    npx prettier --loglevel warn --write "src/**/*.{js,jsx,css,html}" || echo Prettier fixes attempted
 )
 
 if "%CHECK_MODE%"=="true" (

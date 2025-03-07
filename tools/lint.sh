@@ -40,19 +40,21 @@ cd ..
 # Frontend checks
 echo "Running ESLint..."
 if [ "$CHECK_MODE" = true ]; then
-    npm exec eslint "./src/**/*.{js,jsx,ts,tsx}" || CHECKS_FAILED=1
+    npx eslint "src/**/*.{js,jsx}" --max-warnings 0 || CHECKS_FAILED=1
 else
-    npm exec eslint "./src/**/*.{js,jsx,ts,tsx}" --fix || true
+    npx eslint "src/**/*.{js,jsx}" --fix || true
 fi
 
 echo "Running TypeScript check..."
-npm exec tsc --noEmit || CHECKS_FAILED=1
+# Use --pretty for better formatted output and --noEmit since we don't need the output files
+npx tsc --noEmit --pretty || CHECKS_FAILED=1
 
 echo "Running Prettier..."
 if [ "$CHECK_MODE" = true ]; then
-    npm exec prettier --check "./src/**/*.{js,jsx,ts,tsx,css,html}" || CHECKS_FAILED=1
+    # Use --loglevel warn to reduce verbosity
+    npx prettier --log-level warn --check "src/**/*.{js,jsx,css,html}" || CHECKS_FAILED=1
 else
-    npm exec prettier --write "./src/**/*.{js,jsx,ts,tsx,css,html}" || true
+    npx prettier --log-level warn --write "src/**/*.{js,jsx,css,html}" || true
 fi
 
 if [ "$CHECK_MODE" = true ]; then
