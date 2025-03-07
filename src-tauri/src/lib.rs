@@ -176,7 +176,7 @@ pub mod verilog {
         let mut all_defs = HashMap::new();
 
         for file_path in file_paths {
-            let result = parse_sv(&Path::new(&file_path), &defines, &includes, false, true);
+            let result = parse_sv(Path::new(&file_path), &defines, &includes, false, true);
 
             let syntax_tree = match result {
                 Ok((syntax_tree, _)) => syntax_tree,

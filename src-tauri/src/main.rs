@@ -4,22 +4,20 @@
 // Import our library module
 mod lib;
 
-use serde::{Deserialize, Serialize};
-use std::path::PathBuf;
 
-// Import our verilog module from lib.rs
+// Import our verilog module from verilog.rs
 use lib::verilog::{self, Design};
 
 /// Deserialize a design from a list of Verilog file paths.
 #[tauri::command]
 fn parse_files(file_paths: Vec<String>) -> Result<Design, String> {
-    verilog::parse_verilog_files(file_paths)
+    lib::parse_verilog_files(file_paths)
 }
 
 /// Find all Verilog files in a directory
 #[tauri::command]
 fn find_verilog_files(directory: String) -> Result<Vec<String>, String> {
-    verilog::list_verilog_files(directory)
+    lib::list_verilog_files(directory)
 }
 
 #[tauri::command]
@@ -52,7 +50,7 @@ mod tests {
         example_path.push("../test/simple/example.v");
 
         let file_path = example_path.to_str().unwrap().to_string();
-        let result = verilog::parse_single_file(&file_path);
+        let result = lib::parse_single_file(&file_path);
 
         assert!(
             result.is_ok(),
@@ -114,7 +112,7 @@ mod tests {
         )
         .unwrap();
 
-        let result = verilog::parse_single_file(file_path.to_str().unwrap());
+        let result = lib::parse_single_file(file_path.to_str().unwrap());
 
         assert!(
             result.is_ok(),
