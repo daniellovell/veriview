@@ -6,7 +6,46 @@ on:
     branches: [ master ]
 
 jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+          cache: 'npm'
+
+      - name: Install Rust (Stable)
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+
+      - name: Install frontend dependencies
+        run: npm install
+
+      - name: Install glib-2.0
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y libglib2.0-dev
+
+      - name: Rust Format Check
+        run: cd src-tauri && cargo fmt --all -- --check
+
+      - name: Rust Clippy Check
+        run: cd src-tauri && cargo clippy -- -D warnings
+
+      - name: ESLint Check
+        run: npm run lint || true
+
+      - name: TypeScript Check
+        run: npm run type-check || true
+
+      - name: Prettier Check
+        run: npm run format-check || true
+
   build-and-test:
+    needs: lint
     strategy:
       fail-fast: false
       matrix:
