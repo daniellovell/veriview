@@ -1,12 +1,10 @@
-name: Build and Test
+name: Release
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    branches: [ release ]
 
 jobs:
-  build-and-test:
+  release:
     strategy:
       fail-fast: false
       matrix:
@@ -47,7 +45,16 @@ jobs:
         run: npm install
 
       - name: Build the app
-        run: npm run tauri build -- --target ${{ matrix.rpm_target || matrix.target }}
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: v__VERSION__
+          releaseName: "Veriview v__VERSION__"
+          releaseBody: "See the assets to download this version and install."
+          releaseDraft: true
+          prerelease: false
+          args: --target ${{ matrix.rpm_target || matrix.target }}
 
       - name: Create standalone archive
         if: matrix.platform == 'ubuntu-latest'
@@ -70,21 +77,4 @@ jobs:
           echo "Note: You may need to install basic dependencies:" >> veriview-standalone/README.txt
           echo "  libgtk-3-0 libwebkit2gtk-4.1-0" >> veriview-standalone/README.txt
           # Create tar archive
-          tar -czf veriview-standalone-linux-x64.tar.gz veriview-standalone
-
-      - name: Run frontend tests
-        run: npm test
-        if: false  # Disabled until tests are added
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.platform }}-bundle
-          path: |
-            src-tauri/target/release/bundle/dmg/*.dmg
-            src-tauri/target/release/bundle/msi/*.msi
-            src-tauri/target/release/bundle/appimage/*.AppImage
-            src-tauri/target/release/bundle/rpm/*.rpm
-            src-tauri/target/release/veriview-standalone-linux-x64.tar.gz
-          compression-level: 9
-          retention-days: 5 
+          tar -czf veriview-standalone-linux-x64.tar.gz veriview-standalone 
