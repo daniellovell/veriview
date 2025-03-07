@@ -99,6 +99,7 @@ This creates platform-specific installers in the `src-tauri/target/release/bundl
 - `src/` - React frontend code
 - `src-tauri/` - Rust backend code
 - `public/` - Static assets
+- `.github/workflows/` - CI/CD configuration
 
 ## License
 
