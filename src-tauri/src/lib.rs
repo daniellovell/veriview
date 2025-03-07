@@ -235,7 +235,9 @@ pub mod verilog {
         Ok(verilog_files)
     }
 
-    // Add a function for testing the parsing of Verilog files
+    /// Function provided for testing purposes.
+    /// This should only be used in tests and examples.
+    #[doc(hidden)]
     pub fn parse_single_file(file_path: &str) -> Result<Design, String> {
         parse_verilog_files(vec![file_path.to_string()])
     }
