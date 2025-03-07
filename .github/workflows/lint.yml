@@ -27,10 +27,10 @@ jobs:
 
       # Rust linting
       - name: Rust Format Check
-        run: cargo fmt --all -- --check
+        run: cd src-tauri && cargo fmt --all -- --check
 
       - name: Rust Clippy Check
-        run: cargo clippy -- -D warnings
+        run: cd src-tauri && cargo clippy -- -D warnings
 
       # Node.js/React linting
       - name: ESLint Check

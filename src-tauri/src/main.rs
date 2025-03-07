@@ -3,11 +3,9 @@
 
 use std::collections::{HashMap, HashSet};
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
 use serde::{Deserialize, Serialize};
-use tauri::Manager;
-use tauri_plugin_opener::OpenerExt;
 
 /// A submodule instantiation from within a module definition.
 #[derive(Debug, Serialize, Deserialize)]
@@ -40,7 +38,7 @@ fn get_identifier(node: sv_parser::RefNode) -> Option<sv_parser::Locate> {
     }
 }
 
-/// Convert a node’s identifier into a String using the SyntaxTree.
+/// Convert a node's identifier into a String using the SyntaxTree.
 fn get_identifier_str(
     syntax_tree: &sv_parser::SyntaxTree,
     node: sv_parser::RefNode,
@@ -137,7 +135,7 @@ fn process_syntax_tree(syntax_tree: &sv_parser::SyntaxTree) -> HashMap<String, V
             | sv_parser::RefNode::ModuleDeclarationAnsi(_) => {
                 if let Some(module_name) = extract_module_name(syntax_tree, &node) {
                     module_stack.push(module_name.clone());
-                    definitions.entry(module_name).or_insert(Vec::new());
+                    definitions.entry(module_name).or_default();
                 }
             }
             sv_parser::RefNode::ModuleInstantiation(_) => {
