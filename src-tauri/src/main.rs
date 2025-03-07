@@ -43,8 +43,6 @@ mod tests {
     #[cfg(test)]
     use veriview_lib::verilog::{self};
 
-    
-
     #[test]
     fn test_parse_example() {
         // Get the path to the example.v file

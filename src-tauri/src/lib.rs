@@ -218,15 +218,13 @@ pub mod verilog {
 
         let mut verilog_files = Vec::new();
 
-        for entry in entries {
-            if let Ok(entry) = entry {
-                let path = entry.path();
-                if let Some(ext) = path.extension() {
-                    let ext_str = ext.to_string_lossy().to_lowercase();
-                    if ext_str == "v" || ext_str == "sv" {
-                        if let Some(path_str) = path.to_str() {
-                            verilog_files.push(path_str.to_string());
-                        }
+        for entry in entries.flatten() {
+            let path = entry.path();
+            if let Some(ext) = path.extension() {
+                let ext_str = ext.to_string_lossy().to_lowercase();
+                if ext_str == "v" || ext_str == "sv" {
+                    if let Some(path_str) = path.to_str() {
+                        verilog_files.push(path_str.to_string());
                     }
                 }
             }
