@@ -2,66 +2,66 @@
 
 // Base node style
 export const baseNodeStyle = {
-  label: "data(label)",
-  "text-valign": "center",
-  "text-halign": "center",
-  "font-size": "14px",
-  "font-weight": "normal",
-  "font-family": "system-ui, sans-serif",
-  "background-color": "#4a7ba6",
-  color: "#ffffff",
-  "text-outline-width": 0,
-  "text-max-width": "180px",
-  "text-wrap": "wrap",
+  label: 'data(label)',
+  'text-valign': 'center',
+  'text-halign': 'center',
+  'font-size': '14px',
+  'font-weight': 'normal',
+  'font-family': 'system-ui, sans-serif',
+  'background-color': '#4a7ba6',
+  color: '#ffffff',
+  'text-outline-width': 0,
+  'text-max-width': '180px',
+  'text-wrap': 'wrap',
   width: 180,
   height: 80,
-  shape: "rectangle",
-  "border-width": 2,
-  "border-color": "#2b3a4a",
-  padding: "15px",
+  shape: 'rectangle',
+  'border-width': 2,
+  'border-color': '#2b3a4a',
+  padding: '15px',
 };
 
 // Parent node style for nested view
 export const parentNodeStyle = {
-  "text-valign": "top",
-  "text-halign": "center",
-  "background-opacity": 0.8,
-  "background-color": "#2b3a4a",
-  "border-width": 3,
-  "border-color": "#1a2430",
+  'text-valign': 'top',
+  'text-halign': 'center',
+  'background-opacity': 0.8,
+  'background-color': '#2b3a4a',
+  'border-width': 3,
+  'border-color': '#1a2430',
   padding: 60,
-  shape: "rectangle",
+  shape: 'rectangle',
 };
 
 // Edge style
 export const edgeStyle = {
-  label: "data(label)",
-  "curve-style": "bezier",
+  label: 'data(label)',
+  'curve-style': 'bezier',
   width: 2,
-  "line-color": "#6c757d",
-  "target-arrow-shape": "triangle",
-  "target-arrow-color": "#6c757d",
-  "font-size": "12px",
-  color: "#333333",
-  "text-background-color": "#ffffff",
-  "text-background-opacity": 0.7,
-  "text-background-padding": "3px",
-  "edge-text-rotation": "autorotate",
+  'line-color': '#6c757d',
+  'target-arrow-shape': 'triangle',
+  'target-arrow-color': '#6c757d',
+  'font-size': '12px',
+  color: '#333333',
+  'text-background-color': '#ffffff',
+  'text-background-opacity': 0.7,
+  'text-background-padding': '3px',
+  'edge-text-rotation': 'autorotate',
 };
 
 // Layout configurations
 export const getLayoutConfig = (viewMode) => {
   return viewMode === 'tree'
     ? {
-        name: "breadthfirst",
+        name: 'breadthfirst',
         directed: true,
         padding: 30,
         spacingFactor: 1.5,
-        rankDir: "TB",
+        rankDir: 'TB',
       }
     : {
-        name: "fcose",
-        quality: "default",
+        name: 'fcose',
+        quality: 'default',
         randomize: true,
         animate: true,
         animationDuration: 200,
@@ -83,6 +83,6 @@ export const getLayoutConfig = (viewMode) => {
         gravityRangeCompound: 3.0,
         gravityCompound: 2.0,
         gravityRange: 4.0,
-        initialEnergyOnIncremental: 0.5
+        initialEnergyOnIncremental: 0.5,
       };
-}; 
+};

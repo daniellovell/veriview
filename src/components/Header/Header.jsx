@@ -8,10 +8,7 @@ function Header({ viewMode, toggleViewMode, handleFileOpen, hasDesign }) {
       <h3 className="app-title">Verilog Design Viewer</h3>
       <div className="controls">
         {hasDesign && (
-          <button 
-            className="view-toggle-button" 
-            onClick={toggleViewMode}
-          >
+          <button className="view-toggle-button" onClick={toggleViewMode}>
             {viewMode === 'tree' ? 'Switch to Nested View' : 'Switch to Tree View'}
           </button>
         )}
@@ -23,4 +20,4 @@ function Header({ viewMode, toggleViewMode, handleFileOpen, hasDesign }) {
   );
 }
 
-export default Header; 
+export default Header;
