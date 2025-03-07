@@ -2,10 +2,10 @@
 
 // Module for Verilog parsing functionality
 pub mod verilog {
+    use serde::{Deserialize, Serialize};
     use std::collections::HashMap;
     use std::path::Path;
     use sv_parser::parse_sv;
-    use serde::{Serialize, Deserialize};
 
     /// Struct to represent a submodule instantiation
     #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -76,7 +76,7 @@ pub mod verilog {
             let hi = sv_parser::unwrap_node!(*inst, HierarchicalInstance)?;
             let inst_id = sv_parser::unwrap_node!(hi, InstanceIdentifier)?;
             let instance_name = get_identifier_str(syntax_tree, inst_id)?;
-            
+
             Some((instance_name, module_type))
         } else {
             None
@@ -84,10 +84,12 @@ pub mod verilog {
     }
 
     /// Process a syntax tree to extract module definitions and instantiations
-    pub fn process_syntax_tree(syntax_tree: &sv_parser::SyntaxTree) -> HashMap<String, Vec<Submodule>> {
+    pub fn process_syntax_tree(
+        syntax_tree: &sv_parser::SyntaxTree,
+    ) -> HashMap<String, Vec<Submodule>> {
         let mut definitions: HashMap<String, Vec<Submodule>> = HashMap::new();
         let mut module_stack: Vec<String> = Vec::new();
-        
+
         for node in syntax_tree {
             match node {
                 sv_parser::RefNode::ModuleDeclarationNonansi(_)
@@ -120,7 +122,7 @@ pub mod verilog {
                 }
             }
         }
-        
+
         definitions
     }
 
@@ -140,7 +142,7 @@ pub mod verilog {
         } else {
             Vec::new()
         };
-        
+
         InstanceNode {
             instance_name,
             module_type,
@@ -152,14 +154,14 @@ pub mod verilog {
     /// Find top-level modules (those that are not instantiated by any other module)
     pub fn find_top_level_modules(defs: &HashMap<String, Vec<Submodule>>) -> Vec<String> {
         use std::collections::HashSet;
-        
+
         let mut instantiated = HashSet::new();
         for subs in defs.values() {
             for sub in subs {
                 instantiated.insert(sub.module_type.clone());
             }
         }
-        
+
         defs.keys()
             .filter(|k| !instantiated.contains(*k))
             .cloned()
@@ -170,34 +172,29 @@ pub mod verilog {
     pub fn parse_verilog_files(file_paths: Vec<String>) -> Result<Design, String> {
         let defines = HashMap::new();
         let includes = Vec::<String>::new();
-        
+
         let mut all_defs = HashMap::new();
-        
+
         for file_path in file_paths {
-            let result = parse_sv(
-                &Path::new(&file_path),
-                &defines,
-                &includes,
-                false,
-                true,
-            );
-            
+            let result = parse_sv(&Path::new(&file_path), &defines, &includes, false, true);
+
             let syntax_tree = match result {
                 Ok((syntax_tree, _)) => syntax_tree,
                 Err(e) => return Err(format!("Failed to parse {}: {}", file_path, e)),
             };
-            
+
             let defs = process_syntax_tree(&syntax_tree);
-            
+
             for (module, submodules) in defs {
-                all_defs.entry(module)
+                all_defs
+                    .entry(module)
                     .or_insert_with(Vec::new)
                     .extend(submodules);
             }
         }
-        
+
         let top_modules = find_top_level_modules(&all_defs);
-        
+
         let mut top_instances = Vec::new();
         for module_name in top_modules {
             top_instances.push(build_instance_node(
@@ -206,21 +203,21 @@ pub mod verilog {
                 module_name,
             ));
         }
-        
+
         Ok(Design { top_instances })
     }
 
     /// List all Verilog files in a directory
     pub fn list_verilog_files(directory: String) -> Result<Vec<String>, String> {
         use std::fs;
-        
+
         let entries = match fs::read_dir(directory) {
             Ok(entries) => entries,
             Err(e) => return Err(format!("Failed to read directory: {}", e)),
         };
-        
+
         let mut verilog_files = Vec::new();
-        
+
         for entry in entries {
             if let Ok(entry) = entry {
                 let path = entry.path();
@@ -234,7 +231,7 @@ pub mod verilog {
                 }
             }
         }
-        
+
         Ok(verilog_files)
     }
 
