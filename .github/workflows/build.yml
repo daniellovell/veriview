@@ -11,6 +11,9 @@ jobs:
       fail-fast: false
       matrix:
         platform: [windows-latest, macos-latest, ubuntu-latest]
+        include:
+          - platform: ubuntu-latest
+            rpm_target: x86_64-unknown-linux-gnu
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -24,12 +27,14 @@ jobs:
 
       - name: Install Rust (Stable)
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rpm_target }}
 
       - name: Install dependencies (ubuntu only)
         if: matrix.platform == 'ubuntu-latest'
         run: |
           sudo apt-get update
-          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf rpm
 
       - name: Install frontend dependencies
         run: npm install
@@ -44,16 +49,44 @@ jobs:
           releaseBody: "See the assets to download this version and install."
           releaseDraft: true
           prerelease: false
+          args: --target ${{ matrix.rpm_target }}
+
+      - name: Create standalone archive
+        if: matrix.platform == 'ubuntu-latest'
+        run: |
+          cd src-tauri/target/release
+          # Create a directory for the standalone package
+          mkdir -p veriview-standalone
+          # Copy the binary and any necessary assets
+          cp veriview veriview-standalone/
+          cp -r ../../../public veriview-standalone/
+          # Create a launcher script
+          echo '#!/bin/bash' > veriview-standalone/launch.sh
+          echo 'cd "$(dirname "$0")"' >> veriview-standalone/launch.sh
+          echo './veriview' >> veriview-standalone/launch.sh
+          chmod +x veriview-standalone/launch.sh
+          # Create README with instructions
+          echo "Veriview Standalone Binary" > veriview-standalone/README.txt
+          echo "1. Extract this archive" >> veriview-standalone/README.txt
+          echo "2. Run ./launch.sh" >> veriview-standalone/README.txt
+          echo "Note: You may need to install basic dependencies:" >> veriview-standalone/README.txt
+          echo "  libgtk-3-0 libwebkit2gtk-4.0-37" >> veriview-standalone/README.txt
+          # Create tar archive
+          tar -czf veriview-standalone-linux-x64.tar.gz veriview-standalone
 
       - name: Run frontend tests
         run: npm test
         if: false  # Disabled until tests are added
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.platform }}-bundle
           path: |
             src-tauri/target/release/bundle/dmg/*.dmg
             src-tauri/target/release/bundle/msi/*.msi
-            src-tauri/target/release/bundle/appimage/*.AppImage 
+            src-tauri/target/release/bundle/appimage/*.AppImage
+            src-tauri/target/release/bundle/rpm/*.rpm
+            src-tauri/target/release/veriview-standalone-linux-x64.tar.gz
+          compression-level: 9
+          retention-days: 5 
