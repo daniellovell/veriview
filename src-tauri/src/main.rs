@@ -49,7 +49,7 @@ mod tests {
     fn test_parse_example() {
         // Get the path to the example.v file
         let mut example_path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        example_path.push("../example.v");
+        example_path.push("../test/simple/example.v");
         
         let file_path = example_path.to_str().unwrap().to_string();
         let result = verilog::parse_single_file(&file_path);

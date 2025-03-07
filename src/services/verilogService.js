@@ -6,11 +6,11 @@ import { open as openDialog } from "@tauri-apps/plugin-dialog";
 export async function fetchDesignFromCurrentDir() {
   try {
     console.log("Fetching design from current directory...");
-    const data = await invoke("parse_verilog_files", { filePaths: [] });
+    const data = await invoke("parse_files", { filePaths: [] });
     console.log("Received design:", data);
     return data;
   } catch (err) {
-    console.error("Error invoking parse_verilog_files:", err);
+    console.error("Error invoking parse_files:", err);
     throw err;
   }
 }
@@ -33,7 +33,7 @@ export async function openAndParseVerilogFiles() {
     
     // The dialog can return a single path or array of paths
     const filePaths = Array.isArray(selected) ? selected : [selected];
-    const data = await invoke("parse_verilog_files", { filePaths });
+    const data = await invoke("parse_files", { filePaths });
     return data;
   } catch (err) {
     console.error("Error opening files:", err);
