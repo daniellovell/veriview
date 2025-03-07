@@ -22,12 +22,23 @@ jobs:
         with:
           components: rustfmt, clippy
 
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgtk-3-dev \
+            libglib2.0-dev \
+            libgdk-pixbuf2.0-dev \
+            libatk1.0-dev \
+            libpango1.0-dev \
+            libcairo2-dev \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf
+
       - name: Install frontend dependencies
         run: npm install
-
-      - name: Install glib-2.0
-        if: runner.os == 'Linux'
-        run: sudo apt-get install -y libglib2.0-dev
 
       - name: Rust Format Check
         run: cd src-tauri && cargo fmt --all -- --check
