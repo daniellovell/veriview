@@ -40,6 +40,9 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
 
+      - name: Make lint script executable
+        run: chmod +x ./tools/lint.sh
+
       - name: Run all linting checks
         run: ./tools/lint.sh --check
 
