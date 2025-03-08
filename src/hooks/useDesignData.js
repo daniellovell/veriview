@@ -13,12 +13,12 @@ export function useDesignData() {
         const data = await fetchDesignFromCurrentDir();
         setDesign(data);
       } catch (err) {
-        console.error("Failed to load design:", err);
+        console.error('Failed to load design:', err);
       } finally {
         setLoading(false);
       }
     }
-    
+
     loadInitialDesign();
   }, []);
 
@@ -31,11 +31,11 @@ export function useDesignData() {
         setDesign(data);
       }
     } catch (err) {
-      console.error("Error in handleFileOpen:", err);
+      console.error('Error in handleFileOpen:', err);
     } finally {
       setLoading(false);
     }
   };
 
   return { design, loading, handleFileOpen };
-} 
+}

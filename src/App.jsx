@@ -12,7 +12,7 @@ function App() {
 
   // Toggle between view modes
   const toggleViewMode = () => {
-    setViewMode(prevMode => prevMode === 'tree' ? 'nested' : 'tree');
+    setViewMode((prevMode) => (prevMode === 'tree' ? 'nested' : 'tree'));
   };
 
   // Check if we have a design with modules
@@ -20,24 +20,18 @@ function App() {
 
   return (
     <div className="app-container">
-      <Header 
-        viewMode={viewMode} 
-        toggleViewMode={toggleViewMode} 
+      <Header
+        viewMode={viewMode}
+        toggleViewMode={toggleViewMode}
         handleFileOpen={handleFileOpen}
         hasDesign={hasDesign}
       />
-      
-      {!hasDesign && (
-        <EmptyState loading={loading} />
-      )}
-      
-      <DesignViewer 
-        design={design} 
-        viewMode={viewMode} 
-      />
+
+      {!hasDesign && <EmptyState loading={loading} />}
+
+      <DesignViewer design={design} viewMode={viewMode} />
     </div>
   );
 }
 
 export default App;
-

@@ -3,7 +3,12 @@ import React, { useEffect, useRef } from 'react';
 import cytoscape from 'cytoscape';
 import fcose from 'cytoscape-fcose';
 import { flattenDesign, createNestedDesign } from '../../utils/designTransformers';
-import { baseNodeStyle, parentNodeStyle, edgeStyle, getLayoutConfig } from '../../utils/cytoscapeConfig';
+import {
+  baseNodeStyle,
+  parentNodeStyle,
+  edgeStyle,
+  getLayoutConfig,
+} from '../../utils/cytoscapeConfig';
 import './DesignViewer.css';
 
 // Register the fcose layout
@@ -18,12 +23,10 @@ function DesignViewer({ design, viewMode }) {
     if (!design || !containerRef.current) return;
 
     console.log(`Initializing Cytoscape with ${viewMode} view mode`);
-    
+
     // Choose the appropriate elements based on view mode
-    const elements = viewMode === 'tree' 
-      ? flattenDesign(design) 
-      : createNestedDesign(design);
-    
+    const elements = viewMode === 'tree' ? flattenDesign(design) : createNestedDesign(design);
+
     // Destroy old instance if it exists
     if (cyRef.current) {
       cyRef.current.destroy();
@@ -36,38 +39,38 @@ function DesignViewer({ design, viewMode }) {
         elements,
         style: [
           {
-            selector: "node",
-            style: baseNodeStyle
+            selector: 'node',
+            style: baseNodeStyle,
           },
           {
-            selector: "node:parent",
-            style: parentNodeStyle
+            selector: 'node:parent',
+            style: parentNodeStyle,
           },
           {
-            selector: "edge",
-            style: edgeStyle
+            selector: 'edge',
+            style: edgeStyle,
           },
         ],
         layout: getLayoutConfig(viewMode),
       });
 
       // Add interaction handlers
-      cyRef.current.on('tap', 'node', function(evt) {
+      cyRef.current.on('tap', 'node', function (evt) {
         const node = evt.target;
         // Don't zoom on parent nodes in nested view
         if (viewMode === 'nested' && node.isParent()) return;
-        
+
         cyRef.current.fit(node, 50);
       });
 
       // Add a fit-all zoom control
-      cyRef.current.on('tap', function(evt) {
+      cyRef.current.on('tap', function (evt) {
         if (evt.target === cyRef.current) {
           cyRef.current.fit();
         }
       });
     } catch (error) {
-      console.error("Error initializing Cytoscape:", error);
+      console.error('Error initializing Cytoscape:', error);
     }
 
     // Cleanup
@@ -86,9 +89,9 @@ function DesignViewer({ design, viewMode }) {
       {hasDesign && (
         <div className="mode-description">
           <p>
-            <strong>Current: {viewMode === 'tree' ? 'Tree View' : 'Nested View'}</strong> - 
-            {viewMode === 'tree' 
-              ? ' Shows module instantiations as a hierarchy tree' 
+            <strong>Current: {viewMode === 'tree' ? 'Tree View' : 'Nested View'}</strong> -
+            {viewMode === 'tree'
+              ? ' Shows module instantiations as a hierarchy tree'
               : ' Shows modules contained inside their parent modules'}
           </p>
           {viewMode === 'nested' && (
@@ -103,4 +106,4 @@ function DesignViewer({ design, viewMode }) {
   );
 }
 
-export default DesignViewer; 
+export default DesignViewer;

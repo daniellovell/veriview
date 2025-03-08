@@ -40,20 +40,11 @@ jobs:
       - name: Install frontend dependencies
         run: npm install
 
-      - name: Rust Format Check
-        run: cd src-tauri && cargo fmt --all -- --check
+      - name: Make lint script executable
+        run: chmod +x ./tools/lint.sh
 
-      - name: Rust Clippy Check
-        run: cd src-tauri && cargo clippy -- -D warnings
-
-      - name: ESLint Check
-        run: npm run lint || true
-
-      - name: TypeScript Check
-        run: npm run type-check || true
-
-      - name: Prettier Check
-        run: npm run format-check || true
+      - name: Run all linting checks
+        run: ./tools/lint.sh --check
 
   build-and-test:
     needs: lint
@@ -97,12 +88,13 @@ jobs:
         run: npm install
 
       - name: Build the app
-        run: npm run tauri build -- --target ${{ matrix.rpm_target || matrix.target }}
+        run: npm run tauri -- build --target ${{ matrix.rpm_target || matrix.target }}
+
 
       - name: Create standalone archive
         if: matrix.platform == 'ubuntu-latest'
         run: |
-          cd src-tauri/target/release
+          cd src-tauri/target/x86_64-unknown-linux-gnu/release
           # Create a directory for the standalone package
           mkdir -p veriview-standalone
           # Copy the binary and any necessary assets

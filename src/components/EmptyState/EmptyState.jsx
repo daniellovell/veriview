@@ -10,11 +10,13 @@ function EmptyState({ loading }) {
       ) : (
         <>
           <p className="empty-state-title">No Verilog modules found</p>
-          <p className="empty-state-subtitle">Open Verilog files to visualize the design hierarchy</p>
+          <p className="empty-state-subtitle">
+            Open Verilog files to visualize the design hierarchy
+          </p>
         </>
       )}
     </div>
   );
 }
 
-export default EmptyState; 
+export default EmptyState;

@@ -31,3 +31,6 @@ tauri-plugin-dialog = "2"
 # DO NOT REMOVE!!
 custom-protocol = ["tauri/custom-protocol"]
 
+[dev-dependencies]
+tempfile = "3.8.0"
+
